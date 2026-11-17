@@ -1,0 +1,17 @@
+# Runs only when docs/ changes. Used to show what happens when a required check lives in a
+# workflow that path filters skip.
+name: docs
+
+on:
+  pull_request:
+    paths:
+      - "docs/**"
+
+permissions:
+  contents: read
+
+jobs:
+  docs-check:
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "docs checked"

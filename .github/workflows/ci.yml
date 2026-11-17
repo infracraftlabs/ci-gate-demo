@@ -1,0 +1,50 @@
+# Two gates side by side, for the experiment in the README.
+# naive-gate only lists `needs`; ci-ok runs with always() and fails unless every needed job succeeded.
+name: ci
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  merge_group:
+
+permissions:
+  contents: read
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - run: bash -n scripts/test.sh
+
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - run: bash scripts/test.sh
+
+  build:
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "build would run here"
+
+  naive-gate:
+    needs: [lint, test, build]
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "every needed job passed"
+
+  ci-ok:
+    if: ${{ always() }}
+    needs: [lint, test, build]
+    runs-on: ubuntu-latest
+    steps:
+      - env:
+          NEEDS: ${{ toJSON(needs) }}
+        run: echo "$NEEDS" | jq -e 'all(.[]; .result == "success")'
