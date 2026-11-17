@@ -13,4 +13,16 @@ It answers three questions on real GitHub runs:
 `scripts/test.sh` fails when a file named `FAIL` exists, so a pull request can fail on purpose.
 Nothing here deploys anything or uses secrets. Actions are pinned to commit SHAs.
 
-The results, with links to the runs and pull requests, are in the tutorial.
+## Results (17 November 2026)
+
+| Required check | Pull request | Gate result | Merge state |
+|---|---|---|---|
+| `naive-gate` | #1, failing test | skipped | mergeable (`UNSTABLE`) |
+| `ci-ok` | #1, failing test | failure | blocked |
+| `ci-ok` + `docs-check` | #2, README only, all tests pass | `docs-check` never reported | blocked |
+| `ci-ok` (final setting) | #2 | success | mergeable |
+
+Runs: [#1](https://github.com/infracraftlabs/ci-gate-demo/actions/runs/44041555616),
+[#2](https://github.com/infracraftlabs/ci-gate-demo/actions/runs/44041697319).
+The ruleset now requires only `ci-ok`. The pull requests stay open as evidence and won't be merged.
+Not tested here: a merge queue (`merge_group`), organisation-level rulesets, external CI.
